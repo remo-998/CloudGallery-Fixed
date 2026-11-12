@@ -17,7 +17,7 @@ This is not a complete rewrite or a claim that every upstream issue is fixed. In
 
 Download `app-release.apk` from this repository's latest GitHub Release. The app requires Android 10 or newer. Android may ask you to allow installation from the browser or file manager used to open the APK.
 
-The build uses the repository's configured debug signing key for its release APK. If Android reports a signature conflict when installing over an existing CloudGallery, do not uninstall the old app until you have protected/exported its local database; uninstalling can remove the app's local records and credentials. The photos already uploaded to Telegram are separate from those local records.
+The build uses a locally generated Android debug signing key, which differs from the signing certificate on the upstream APK. Android will therefore reject it as an update over the original app. **Before installing this fixed build, export/protect any local database or records, then uninstall the original CloudGallery and install this APK.** Uninstalling removes the original app's on-device settings, credentials, and local database. Photos already uploaded to Telegram are separate and remain in Telegram. The fixed build uses the same application ID (`com.akslabs.cloudgallery`) and can later update this fixed build when signed with the same key; it cannot update the upstream-signed APK.
 
 ## Build notes
 
