@@ -439,6 +439,9 @@ fun GettingStartedScreen(
                                             putLong(Preferences.channelId, id)
                                         }
                                         botApi.stopPolling()
+                                        // BotApi.create() captures the token when the client is built.
+                                        // Rebuild it now that onboarding has saved the user's token.
+                                        botApi.create()
                                         onProceed()
                                     } else {
                                         isValidChatId = false

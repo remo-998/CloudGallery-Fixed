@@ -189,7 +189,8 @@ object Preferences {
     private fun migrateToEncrypted(keys: Map<String, *>) {
         for ((key, value1) in keys) {
             val value = value1!!
-            Log.d("map values", "$key: $value")
+            // Never log preference values: this map may contain the Telegram bot token.
+            Log.d("Preferences", "Migrating preference key: $key")
             when (value) {
                 is Int -> {
                     editEncrypted { putInt(key, value) }

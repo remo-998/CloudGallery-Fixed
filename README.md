@@ -1,3 +1,5 @@
+> **Unofficial fixed build.** This public repository is based on [AKS-Labs/CloudGallery](https://github.com/AKS-Labs/CloudGallery). It includes targeted fixes for first-run bot-token activation, unreadable photo URIs being treated as successful uploads, and permission-grant navigation. See [FIXES.md](FIXES.md) for details and [Releases](https://github.com/remo-998/CloudGallery-Fixed/releases/latest) for the installable APK.
+
 <!-- ---------- Header ---------- -->
 <div align="center">
   <img src="app/src/main/res/drawable/chitralaya.png" width="200" height="200">

@@ -25,6 +25,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import kotlin.random.Random
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -103,21 +104,26 @@ suspend fun sendFileViaUri(
     messageThreadId: Long? = null,
     topicName: String? = null
 ): Boolean {
-    val mimeType: String? = getMimeTypeFromUri(contentResolver, uri)
-    val fileExtension = getExtFromMimeType(mimeType!!)
+    val mimeType = getMimeTypeFromUri(contentResolver, uri)
+        ?: throw IOException("Cannot determine MIME type for $uri")
+    val fileExtension = getExtFromMimeType(mimeType)
+        ?: throw IOException("Unsupported MIME type '$mimeType' for $uri")
     val originalFileName = fileName ?: getFileName(contentResolver, uri)
-    val inputStream = contentResolver.openInputStream(uri)
-    var success = false
-    inputStream?.use { ipStream ->
-        val tempFile = File.createTempFile(Random.nextLong().toString(), ".$fileExtension")
-        val outputStream = FileOutputStream(tempFile)
-        ipStream.copyTo(outputStream)
-        success = sendFileApi(
+    val tempFile = File.createTempFile(Random.nextLong().toString(), ".$fileExtension")
+    try {
+        val inputStream = contentResolver.openInputStream(uri)
+            ?: throw IOException("Cannot open input stream for $uri")
+        inputStream.use { ipStream ->
+            FileOutputStream(tempFile).use { outputStream ->
+                ipStream.copyTo(outputStream)
+            }
+        }
+        return sendFileApi(
             botApi,
             channelId,
             uri,
             tempFile,
-            fileExtension!!,
+            fileExtension,
             context,
             uploadType,
             originalFileName,
@@ -127,11 +133,9 @@ suspend fun sendFileViaUri(
             messageThreadId,
             topicName
         )
-        outputStream.close()
-        Log.d(TAG, tempFile.name)
-        tempFile.deleteOnExit()
+    } finally {
+        tempFile.delete()
     }
-    return success
 }
 
 /**

@@ -13,6 +13,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -87,6 +88,14 @@ class MainActivity : ComponentActivity() {
                     dialog(ScreenFlow.Permission.route) {
                         val viewModel: PermissionViewModel = screenScopedViewModel()
                         val dialogQueue = viewModel.visiblePermissionDialogQueue
+
+                        LaunchedEffect(hasPhotosPerm) {
+                            if (hasPhotosPerm) {
+                                topNavController.navigate(ScreenFlow.Main.route) {
+                                    popUpTo(ScreenFlow.Permission.route) { inclusive = true }
+                                }
+                            }
+                        }
 
                         val permissionsToRequest = remember {
                             if (isSdkAbove33) {
